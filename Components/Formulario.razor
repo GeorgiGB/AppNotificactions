@@ -1,0 +1,85 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.EntityFrameworkCore;
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Notifications
+@inject IDbContextFactory<DatosDataContext> DatosDataContextFatory;
+@using AppNotificactions.Data;
+@using Syncfusion.Blazor.Grids;
+
+
+<EditForm Model="NuevosDatos" OnValidSubmit="@EnviarDatos" OnInvalidSubmit="@OnInvalidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="p-4 rounded-lg shadow-md max-w-md mx-auto">
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">Titulo</label>
+            <SfTextBox Placeholder="Introducir Titulo" @bind-Value="@NuevosDatos.Titulo"></SfTextBox>
+
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">Mensaje</label>
+            <SfTextBox Placeholder="Introducir mensaje" Multiline="true" @bind-Value="@NuevosDatos.Msg"></SfTextBox>
+
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">Elige un tema</label>
+            <InputSelect @bind-Value="NuevosDatos.TopicId">
+                <option disabled selected>Elige</option>
+                @foreach (var topic in listaTopics)
+                {
+                    <option value="@topic.Id">@topic.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex justify-end">Submit</button>
+        <SfToast ID="toast_default" @ref="toastRef" Title="Success" Content="Informacion enviada a la base de datos" Timeout="3000" Icon="e-meeting">
+            <ToastPosition X="Right"></ToastPosition>
+        </SfToast>
+        
+    </div>
+</EditForm>
+
+
+<p>Titulo es: @NuevosDatos.Titulo</p>
+<p>MSG es: @NuevosDatos.Msg</p>
+<p>Selected topic es: @NuevosDatos.TopicId</p>
+
+
+
+
+<h1>Vista de notificaciones</h1>
+
+@if(DatosMostrados is not null && DatosMostrados.Count > 0)
+{
+
+    <SfGrid DataSource="@DatosMostrados" AllowPaging="true">
+        <GridColumns>
+            <GridColumn Field=@nameof(Datos.Id) HeaderText="ID"></GridColumn>
+            <GridColumn Field=@nameof(Datos.Titulo) HeaderText="Título"></GridColumn>
+            <GridColumn Field=@nameof(Datos.Msg) HeaderText="Contenido"></GridColumn>
+            <GridColumn Field=@nameof(Datos.TopicId) HeaderText="Topic"></GridColumn>
+            <GridColumn Field=@nameof(Datos.FechaEnvio) HeaderText="Fecha de Envío"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+
+
+}
+
+<style>
+
+    #toast_default .e-meeting::before {
+        content: "\e705";
+        font-size: 17px;
+    }
+
+    .tailwind #toast_default .e-meeting::before
+
+
+
+</style>
